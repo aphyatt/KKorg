@@ -20,6 +20,9 @@ enum GameState {
     case Paused
 }
 
+let dropletCatchBoundaryY: CGFloat = 175
+let dropletFadeBoundaryY: CGFloat = 65
+
 var gameControls: Control = .Thumb
 
 let allLines: [[Int]] = [ [1,0,0], [1,0,2], [1,2,0], [1,2,2],

@@ -8,31 +8,24 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+weak var TheGameScene: GameScene?
 
-    var gameState = GameState.GameRunning
-    var controlSettings: Control
+var gameState: GameState?
+var controlSettings: Control?
+
+var numFingers: Int = 0
+var playableMargin: CGFloat = 0
+var playableWidth: CGFloat = 0
+
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let fullRect: CGRect
     let sceneRect: CGRect
-    let dropletRect: CGRect
-    let leftRect: CGRect
-    let rightRect: CGRect
-    let catchZoneRect: CGRect
-    let fadeZoneRect: CGRect
-    let oneThirdX: CGFloat
-    let twoThirdX: CGFloat
-    let playableMargin: CGFloat
+    let worldRect: CGRect
+    let hudRect: CGRect
     
-    let kangaroo = SKSpriteNode(imageNamed: "Kangaroo")
     let horAlignModeDefault: SKLabelHorizontalAlignmentMode = .Center
     let vertAlignModeDefault: SKLabelVerticalAlignmentMode = .Baseline
-    
-    let dropletCatchBoundaryY: CGFloat = 175
-    let dropletFadeBoundaryY: CGFloat = 65
-    var leftColX: CGFloat
-    var midColX: CGFloat
-    var rightColX: CGFloat
     
     //Variables affecting speed / frequency of droplet lines
     var timeBetweenLines: NSTimeInterval = 0.5
@@ -44,15 +37,6 @@ class GameScene: SKScene {
     var groupWaitTimeMax: CGFloat = 3.0
     var groupAmtMin: Int = 2
     var groupAmtMax: Int = 3
-    var kangSpeed: NSTimeInterval
-    
-    //Variables dealing with touches (UI)
-    var leftTouch: Bool = false
-    var rightTouch: Bool = false
-    var moveToCenterCol: Bool = false
-    var kangPos: Int = 2
-    var kangPosX: CGFloat = 0
-    var numFingers: Int = 0
     
     //Score and Lives
     var score: Int = 0
@@ -88,84 +72,73 @@ class GameScene: SKScene {
     let JOEY = 1
     let BOOMERANG = 2
     
+    var GameWorld: World?
+    var HUDdisplay: HUD?
+    
     /************************************ Init/Update Functions ***************************************/
     
     override func didMoveToView(view: SKView) {
+        TheGameScene = self
+        super.didMoveToView(view)
+        
+        CreateWorld()
+        CreateHUD()
         debugDrawPlayableArea()
+    }
+    
+    private func CreateWorld() {
+        GameWorld = World()
+        if let world = GameWorld {
+            self.addChild(world)
+        }
+    }
+    
+    private func CreateHUD() {
+        HUDdisplay = HUD()
+        if let hud = HUDdisplay {
+            self.addChild(hud)
+        }
     }
     
     init(size: CGSize, controls: Control) {
         let maxAspectRatio:CGFloat = 16.0/9.0
-        let playableWidth = size.height / maxAspectRatio
+        playableWidth = size.height / maxAspectRatio
         playableMargin = (size.width-playableWidth)/2.0
         fullRect = CGRect(x: 0, y: 0,
             width: size.width,
             height: size.height)
+        worldRect = CGRect(x: 0, y: 0,
+            width: size.width,
+            height: size.height - HUDheight)
+        hudRect = CGRect(x: 0, y: size.height - HUDheight,
+            width: size.width,
+            height: HUDheight)
         sceneRect = CGRect(x: playableMargin, y: 0,
             width: playableWidth,
             height: size.height)
-        dropletRect = CGRect(x: playableMargin, y: dropletCatchBoundaryY,
-            width: playableWidth,
-            height: size.height - dropletCatchBoundaryY)
-        leftRect = CGRect(x: 0, y: 0,
-            width: size.width/2,
-            height: size.height)
-        rightRect = CGRect(x: size.width/2, y: 0,
-            width: size.width/2,
-            height: size.height)
-        catchZoneRect = CGRect(x: playableMargin, y: dropletCatchBoundaryY - 5,
-            width: playableWidth,
-            height: 10)
-        fadeZoneRect = CGRect(x: playableMargin, y: dropletFadeBoundaryY - 5,
-            width: playableWidth,
-            height: 10)
-        oneThirdX = playableMargin + (playableWidth/3)
-        twoThirdX = playableMargin + (playableWidth*(2/3))
         
-        scoreLabelX = oneThirdX - 160
-        
-        leftColX = (size.width/2) - (dropletRect.width/3.5)
-        midColX = size.width/2
-        rightColX = (size.width/2) + (dropletRect.width/3.5)
+        //scoreLabelX = oneThirdX - 160
+        scoreLabelX = 100
         
         joeyLifeStartX = size.width/2 + 93
         boomerangLifeStartX = size.width/2 + 115
   
+        gameState = .GameRunning
         controlSettings = controls
-        kangSpeed = 0.1
-        if(controlSettings == .Thumb) {
-            kangSpeed = 0.05
-        }
-        if(controlSettings == .TwoThumbs) {
-            kangSpeed = 0.1
-        }
+   
         diffLevel = V_EASY
         
         super.init(size: size)
         
-        setupScene()
-        setupHUD()
-        
+        //setupScene()
+        //setupHUD()
     }
     
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupScene() {
-        backgroundColor = SKColor.whiteColor()
-        let background = SKSpriteNode(imageNamed: "Background.jpg")
-        background.position = CGPoint(x: size.width/2, y: size.height/2)
-        background.zPosition = -1
-        addChild(background)
-        
-        kangaroo.position = CGPoint(x: size.width/2, y: dropletCatchBoundaryY)
-        kangaroo.zPosition = 1
-        kangaroo.setScale(0.7)
-        addChild(kangaroo)
-        
-    }
-    
+    /*
     func setupHUD() {
         var HUDheight: CGFloat = 120
         let HUDrect = CGRect(x: 0, y: size.height - HUDheight, width: size.width, height: HUDheight)
@@ -258,31 +231,36 @@ class GameScene: SKScene {
             addChild(nodeS)
         }
     }
+*/
     
     /*********************************************************************************************************
     * UPDATE
     * Function is called incredibly frequently, main game loop is here
     *********************************************************************************************************/
     override func update(currentTime: CFTimeInterval) {
-        
-        switch gameState {
-        case .GameRunning:
-            if (changeDiff) {
-                updateDifficulty()
+    
+        if let gs = gameState {
+            switch gs {
+            case .GameRunning:
+                GameWorld!.update(currentTime)
+                /*
+                if (changeDiff) {
+                    updateDifficulty()
+                }
+            
+                if (totalLinesDropped - lineCountBeforeDrops) == currLinesToDrop {
+                    dropNewGroup()
+                }
+            
+                updateKangaroo()
+                */
+                break
+            case .Paused:
+                break
+            case .GameOver:
+                endGame()
+                break
             }
-            
-            if (totalLinesDropped - lineCountBeforeDrops) == currLinesToDrop {
-                dropNewGroup()
-            }
-            
-            updateKangaroo()
-            
-            break
-        case .Paused:
-            break
-        case .GameOver:
-            endGame()
-            break
         }
         
     }
@@ -319,9 +297,9 @@ class GameScene: SKScene {
         //add background and kangaroo
         score = 0
         diffLevel = 0
-        setupScene()
+        //setupScene()
         //add score, drops and lives labels
-        setupHUD()
+        //setupHUD()
         //set difficulty, speeds, ect.
         timeBetweenLines = 0.5
         totalLinesDropped = 0
@@ -334,7 +312,7 @@ class GameScene: SKScene {
         groupAmtMax = 3
         dropsLeft = 10
         livesLeft = 3
-        kangPos = 2
+        //kangPos = 2
         timesthisFuncCalled = 0
         scene?.physicsWorld.gravity = CGVector(dx: 0, dy: -7.8)
         //change gameState
@@ -503,6 +481,7 @@ class GameScene: SKScene {
     * dropRandomLine: gets random line and drops
     * then groups a determined amount of these into one action
     ***********************************************************************************************************/
+    /*
     func dropNewGroup() {
         //if true, drop a new group of lines
         checkUpdateDifficulty()
@@ -569,6 +548,7 @@ class GameScene: SKScene {
     * Adds child with physics body of individual droplet
     * to the top of the screen
     */
+    
     func spawnDroplet(col: Int, type: Int) {
         var droplet: SKSpriteNode!
         var somethingDropped = true
@@ -624,6 +604,7 @@ class GameScene: SKScene {
             
         }
     }
+*/
     
     /**********************************************************************************************************
     * UPDATE KANGAROO
@@ -633,6 +614,7 @@ class GameScene: SKScene {
     * TODO instead of catching error later, catch error after kangPos is added or subracted to, move accordingly
     * within the case statement
     **********************************************************************************************************/
+    /*
     func updateKangaroo() {
         if leftTouch && (kangPos != 1) {
             kangaroo.runAction(SKAction.moveToX(leftColX, duration: kangSpeed))
@@ -656,89 +638,32 @@ class GameScene: SKScene {
         }
         
     }
+    */
     
     /********************** Update Kangaroo Helper Functions ****************************/
     
-    func sceneTouchedTwoThumbs(touchLocation:CGPoint) {
-        if (gameState == .GameOver) && restartTapWait {
-            restartTap = true
-        }
-        if leftRect.contains(touchLocation) {
-            leftTouch = true
-            rightTouch = false
-        }
-        if rightRect.contains(touchLocation) {
-            rightTouch = true
-            leftTouch = false
-        }
-    }
-    
-    func sceneUntouchedTwoThumbs(touchLocation:CGPoint) {
-        let leftEndTouch = leftRect.contains(touchLocation)
-        let rightEndTouch = rightRect.contains(touchLocation)
-        
-        if leftEndTouch || (numFingers == 0) {
-            leftTouch = false
-        }
-        if rightEndTouch || (numFingers == 0) {
-            rightTouch = false
-        }
-    }
-    
-    func sceneTouchedThumb(touchLocation:CGPoint) {
-        if (gameState == .GameOver) && restartTapWait {
-            restartTap = true
-        }
-        if touchLocation.x < oneThirdX {
-            leftTouch = true
-            rightTouch = false
-        }
-        if touchLocation.x > twoThirdX {
-            rightTouch = true
-            leftTouch = false
-        }
-    }
-    
-    func sceneUntouchedThumb(touchLocation:CGPoint) {
-        if numFingers == 0 {
-            leftTouch = false
-            rightTouch = false
-        }
-    }
-    
-    func trackThumb(touchLocation:CGPoint) {
-        if touchLocation.x < oneThirdX {
-            leftTouch = true
-            rightTouch = false
-        }
-        else if touchLocation.x > twoThirdX {
-            rightTouch = true
-            leftTouch = false
-        }
-        else {
-            leftTouch = false
-            rightTouch = false
-        }
-    }
+   
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         let touch = touches.first as! UITouch
         let touchLocation = touch.locationInNode(self)
         numFingers += touches.count
-        if(controlSettings == .TwoThumbs) {
-            sceneTouchedTwoThumbs(touchLocation)
+        
+        if worldRect.contains(touchLocation) && gameState == .GameRunning {
+            GameWorld!.sceneTouched(touchLocation)
         }
-        if(controlSettings == .Thumb) {
-            sceneTouchedThumb(touchLocation)
+        if worldRect.contains(touchLocation) && gameState == .GameRunning {
+            HUDdisplay!.sceneTouched(touchLocation)
         }
+        //other statused go to pausedScreen.sceneTouched, gameOver.sceneTouched, ect.
        
     }
     
     override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
         let touch = touches.first as! UITouch
         let touchLocation = touch.locationInNode(self)
-        if(controlSettings == .Thumb) {
-            trackThumb(touchLocation)
+        if controlSettings == .Thumb {
+            GameWorld!.trackThumb(touchLocation)
         }
     }
     
@@ -746,11 +671,9 @@ class GameScene: SKScene {
         let touch = touches.first as! UITouch
         let touchLocation = touch.locationInNode(self)
         numFingers -= touches.count
-        if(controlSettings == .TwoThumbs) {
-            sceneUntouchedTwoThumbs(touchLocation)
-        }
-        if(controlSettings == .Thumb) {
-            sceneUntouchedThumb(touchLocation)
+        
+        if worldRect.contains(touchLocation) && gameState == .GameRunning {
+            GameWorld!.sceneUntouched(touchLocation)
         }
     }
     
@@ -758,6 +681,7 @@ class GameScene: SKScene {
     * CHECK COLLISIONS
     * Function for determining collisions between Kangaroo and droplets
     *********************************************************************************************************/
+    /*
     func checkCollisions() {
         
         var caughtJoeys: [SKSpriteNode] = []
@@ -769,13 +693,13 @@ class GameScene: SKScene {
                     caughtJoeys.append(joey)
                     joey.name = "caught"
                 }
-                else if joey.position.y < self.dropletCatchBoundaryY {
+                else if joey.position.y < dropletCatchBoundaryY {
                     missedJoeys.append(joey)
                     joey.name = "missedJoey"
                 }
             }
             else {
-                if joey.position.y < self.dropletCatchBoundaryY {
+                if joey.position.y < dropletCatchBoundaryY {
                     missedJoeys.append(joey)
                     joey.name = "missedJoey"
                 }
@@ -809,13 +733,13 @@ class GameScene: SKScene {
                     caughtBoomers.append(boomer)
                     boomer.name = "caught"
                 }
-                else if boomer.position.y < self.dropletCatchBoundaryY {
+                else if boomer.position.y < dropletCatchBoundaryY {
                     missedBoomers.append(boomer)
                     boomer.name = "missedBoomer"
                 }
             }
             else {
-                if boomer.position.y < self.dropletCatchBoundaryY {
+                if boomer.position.y < dropletCatchBoundaryY {
                     missedBoomers.append(boomer)
                     boomer.name = "missedBoomer"
                 }
@@ -833,6 +757,7 @@ class GameScene: SKScene {
     override func didEvaluateActions()  {
         checkCollisions()
     }
+    */
     
     //Can use pouch idea where joey falls behind pouch and detection is near entrance
     func kangarooCaughtJoey(joey: SKSpriteNode) {
@@ -842,7 +767,7 @@ class GameScene: SKScene {
         let jumpUp = SKAction.moveByX(0.0, y: 10.0, duration: 0.1)
         let jumpDown = jumpUp.reversedAction()
         let catch = SKAction.sequence([jumpUp, jumpDown])
-        kangaroo.runAction(catch)
+        //kangaroo.runAction(catch)
         
         joey.removeAllActions()
         joey.runAction(SKAction.removeFromParent())
@@ -898,6 +823,7 @@ class GameScene: SKScene {
     }
     
     func kangarooCaughtBoomer(boomer: SKSpriteNode) {
+        /*
         //runAction(enemyCollisionSound) ouch!
         // make kangaroo frown
         
@@ -917,6 +843,7 @@ class GameScene: SKScene {
         if(livesLeft == 0) {
             gameState = .GameOver
         }
+        */
         
     }
     
@@ -943,6 +870,7 @@ class GameScene: SKScene {
         //let rightSide = drawRectangle(rightRect, SKColor.redColor(), 10.0)
         //addChild(rightSide)
         
+        /*
         let catchZone = drawRectangle(catchZoneRect, SKColor.blueColor(), 6.0)
         catchZone.zPosition = 2
         addChild(catchZone)
@@ -956,6 +884,14 @@ class GameScene: SKScene {
         test.zPosition = 10
         addChild(test)
         
+        let worldOutline = drawRectangle(worldRect, SKColor.greenColor(), 20.0)
+        worldOutline.zPosition = 500
+        addChild(worldOutline)
+        
+        let hudOutline = drawRectangle(hudRect, SKColor.blueColor(), 20.0)
+        hudOutline.zPosition = 500
+        addChild(hudOutline)
+            */
         
     }
     
