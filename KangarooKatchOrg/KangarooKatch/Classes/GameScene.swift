@@ -11,11 +11,16 @@ import SpriteKit
 weak var TheGameScene: GameScene?
 
 var gameState: GameState?
-var controlSettings: Control?
 
 var numFingers: Int = 0
 var playableMargin: CGFloat = 0
 var playableWidth: CGFloat = 0
+
+let leftColX: CGFloat = 219.43
+let midColX: CGFloat = 384.0
+let rightColX: CGFloat = 548.57
+let oneThirdX: CGFloat = 288.0
+let twoThirdX: CGFloat = 480.0
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -23,9 +28,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let sceneRect: CGRect
     let worldRect: CGRect
     let hudRect: CGRect
-    
-    let horAlignModeDefault: SKLabelHorizontalAlignmentMode = .Center
-    let vertAlignModeDefault: SKLabelVerticalAlignmentMode = .Baseline
     
     //Variables affecting speed / frequency of droplet lines
     var timeBetweenLines: NSTimeInterval = 0.5
@@ -37,19 +39,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var groupWaitTimeMax: CGFloat = 3.0
     var groupAmtMin: Int = 2
     var groupAmtMax: Int = 3
-    
-    //Score and Lives
-    var score: Int = 0
-    var dropsLeft: Int = 10
-    var livesLeft: Int = 3
-    let scoreLabelX: CGFloat
-    let scoreLabelY: CGFloat = 962
-    let livesLabelY: CGFloat = 982
-    let dropsLabelY: CGFloat = 942
-    var joeyLifeStartX: CGFloat
-    var boomerangLifeStartX: CGFloat
-    var scoreLabel : SKLabelNode!
-    var scoreLabelS : SKLabelNode!
     
     //Gameover vars
     var restartTap: Bool = false
@@ -83,6 +72,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         CreateWorld()
         CreateHUD()
+        
         debugDrawPlayableArea()
     }
     
@@ -100,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    init(size: CGSize, controls: Control) {
+    override init(size: CGSize) {
         let maxAspectRatio:CGFloat = 16.0/9.0
         playableWidth = size.height / maxAspectRatio
         playableMargin = (size.width-playableWidth)/2.0
@@ -116,122 +106,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sceneRect = CGRect(x: playableMargin, y: 0,
             width: playableWidth,
             height: size.height)
-        
-        //scoreLabelX = oneThirdX - 160
-        scoreLabelX = 100
-        
-        joeyLifeStartX = size.width/2 + 93
-        boomerangLifeStartX = size.width/2 + 115
   
         gameState = .GameRunning
-        controlSettings = controls
    
         diffLevel = V_EASY
         
         super.init(size: size)
-        
-        //setupScene()
-        //setupHUD()
     }
     
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    /*
-    func setupHUD() {
-        var HUDheight: CGFloat = 120
-        let HUDrect = CGRect(x: 0, y: size.height - HUDheight, width: size.width, height: HUDheight)
-        var HUDshape = drawRectangle(HUDrect, SKColor.blackColor(), 1.0)
-        HUDshape.fillColor = SKColor.blackColor()
-        HUDshape.zPosition = 2
-        addChild(HUDshape)
-        
-        var scoreY: CGFloat = 0
-        var scoreSize: CGFloat = 0
-        
-        scoreSize = 50
-        scoreY = scoreLabelY
-        
-        let scoreLabelA: [SKLabelNode] = createShadowLabel(font: "Soup of Justice", text: "Score: \(score)",
-            fontSize: scoreSize,
-            horAlignMode: .Left, vertAlignMode: .Center,
-            labelColor: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
-            name: "scoreLabel",
-            positon: CGPoint(x: scoreLabelX, y: scoreY),
-            shadowZPos: 4, shadowOffset: 4)
-        scoreLabel = scoreLabelA[0]
-        scoreLabelS = scoreLabelA[1]
-        scoreLabel.runAction(SKAction.scaleYTo(1.3, duration: 0.0))
-        scoreLabelS.runAction(SKAction.scaleYTo(1.3, duration: 0.0))
-        addChild(scoreLabel)
-        addChild(scoreLabelS)
-        
-        var livesDropsX: CGFloat = twoThirdX - 25
-        
-        let livesLabel: [SKLabelNode] = createShadowLabel(font: "Soup of Justice", text: "Lives: ",
-            fontSize: 35,
-            horAlignMode: .Right, vertAlignMode: .Center,
-            labelColor: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
-            name: "livesLabel",
-            positon: CGPoint(x: livesDropsX, y: livesLabelY),
-            shadowZPos: 4, shadowOffset: 2)
-        livesLabel[0].runAction(SKAction.scaleYTo(1.2, duration: 0.0))
-        livesLabel[1].runAction(SKAction.scaleYTo(1.2, duration: 0.0))
-        addChild(livesLabel[0])
-        addChild(livesLabel[1])
-        
-        let dropsLabel: [SKLabelNode] = createShadowLabel(font: "Soup of Justice", text: "Drops: ",
-            fontSize: 35,
-            horAlignMode: .Right, vertAlignMode: .Center,
-            labelColor: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
-            name: "dropsLabel",
-            positon: CGPoint(x: livesDropsX, y: dropsLabelY),
-            shadowZPos: 4, shadowOffset: 2)
-        dropsLabel[0].runAction(SKAction.scaleYTo(1.2, duration: 0.0))
-        dropsLabel[1].runAction(SKAction.scaleYTo(1.2, duration: 0.0))
-        addChild(dropsLabel[0])
-        addChild(dropsLabel[1])
-        
-        for i in 0...9 {
-            let node = SKSpriteNode(imageNamed: "Egg")
-            let nodeS = SKSpriteNode(imageNamed: "Egg")
-            
-            node.position.x = joeyLifeStartX + CGFloat(i)*20
-            node.position.y = dropsLabelY
-            node.setScale(0.04)
-            node.zPosition = 5
-            node.name = "drop\(i+1)"
-            
-            nodeS.position = node.position
-            nodeS.setScale(0.04)
-            nodeS.zPosition = 4
-            nodeS.alpha = 0.5
-            
-            addChild(node)
-            addChild(nodeS)
-        }
-        
-        for i in 0...2 {
-            let node = SKSpriteNode(imageNamed: "Boomerang")
-            let nodeS = SKSpriteNode(imageNamed: "Boomerang")
-            
-            node.position.x = boomerangLifeStartX + CGFloat(i)*60
-            node.position.y = livesLabelY
-            node.setScale(0.10)
-            node.zPosition = 5
-            node.name = "life\(i+1)"
-            
-            nodeS.position = node.position
-            nodeS.setScale(0.10)
-            nodeS.zPosition = 4
-            nodeS.alpha = 0.5
-            
-            addChild(node)
-            addChild(nodeS)
-        }
-    }
-*/
     
     /*********************************************************************************************************
     * UPDATE
@@ -295,7 +180,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         removeAllActions()
         removeAllChildren()
         //add background and kangaroo
-        score = 0
+        TheGameStatus.CurrScore = 0
         diffLevel = 0
         //setupScene()
         //add score, drops and lives labels
@@ -310,8 +195,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         groupWaitTimeMax = 3.0
         groupAmtMin = 2
         groupAmtMax = 3
-        dropsLeft = 10
-        livesLeft = 3
+        TheGameStatus.CurrJoeyLives = 10
+        TheGameStatus.CurrBoomerangeLives = 3
         //kangPos = 2
         timesthisFuncCalled = 0
         scene?.physicsWorld.gravity = CGVector(dx: 0, dy: -7.8)
@@ -368,13 +253,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         runAction(GOgroup)
         
         var scoreMoveLocX: CGFloat = 130
-        if score < 10 {
+        if TheGameStatus.CurrScore < 10 {
             scoreMoveLocX += 20
         }
-        else if score < 100 {
+        else if TheGameStatus.CurrScore < 100 {
             scoreMoveLocX += 10
         }
         //have score move and grow under GAME OVER
+        /*
         let wait2 = SKAction.waitForDuration(3.0)
         let bringToFront = SKAction.runBlock({self.scoreLabel.zPosition = 8; self.scoreLabelS.zPosition = 7})
         let moveIntoPos = SKAction.moveByX(scoreMoveLocX, y: -240, duration: 1.0)
@@ -383,6 +269,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let scoreGroup = SKAction.group([SKAction.runBlock({self.scoreLabel.runAction(scoreAction)}),
             SKAction.runBlock({self.scoreLabelS.runAction(scoreAction)})])
         runAction(scoreGroup)
+        */
         
         //tap anywhere to restart
         let tapRestart = createShadowLabel(font: "Soup of Justice", text: "TAP ANYWHERE TO RESTART",
@@ -642,7 +529,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /********************** Update Kangaroo Helper Functions ****************************/
     
-   
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         let touch = touches.first as! UITouch
@@ -662,7 +548,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
         let touch = touches.first as! UITouch
         let touchLocation = touch.locationInNode(self)
-        if controlSettings == .Thumb {
+        if TheGameStatus.CurrGameControls == .Thumb {
             GameWorld!.trackThumb(touchLocation)
         }
     }
@@ -772,25 +658,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         joey.removeAllActions()
         joey.runAction(SKAction.removeFromParent())
         
-        score++
-        scoreLabel.text = "Score: \(score)"
-        scoreLabelS.text = "Score: \(score)"
-        
-        var adjustX: CGFloat = 0
-        if score >= 10 { adjustX = 10 }
-        if score >= 100 { adjustX = 20 }
-        
-        let grow = SKAction.scaleBy(1.05, duration: 0.15)
-        let adjust = SKAction.runBlock({
-            self.scoreLabel.position.x = self.scoreLabelX - adjustX
-            self.scoreLabelS.position.x = self.scoreLabelX + 2 - adjustX
-        })
-        let shrink = grow.reversedAction()
-        let scoreAction = SKAction.sequence([grow, adjust, shrink])
-        
-        let groupScore = SKAction.group([SKAction.runBlock({self.scoreLabel.runAction(scoreAction)}),
-            SKAction.runBlock({self.scoreLabelS.runAction(scoreAction)})])
-        runAction(groupScore)
+        HUDdisplay!.updateScore()
         
     }
     
@@ -804,6 +672,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func stopAndFadeJoey(joey: SKSpriteNode) {
+        /*
         joey.removeFromParent()
         joey.removeAllActions()
         joey.physicsBody = nil
@@ -819,6 +688,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(dropsLeft == 0) {
             gameState = .GameOver
         }
+        */
         
     }
     

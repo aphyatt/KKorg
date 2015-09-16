@@ -11,12 +11,10 @@ import SpriteKit
 var leftRect: CGRect?
 var rightRect: CGRect?
 
-var oneThirdX: CGFloat?
-var twoThirdX: CGFloat?
-
 class World: SKNode {
     
     var Kang: Kangaroo?
+    var Droplets: DropletLayer?
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -38,8 +36,8 @@ class World: SKNode {
             width: size!.width/2,
             height: size!.height)
         
-        oneThirdX = playableMargin + (playableWidth/3)
-        twoThirdX = playableMargin + (playableWidth*(2/3))
+        //oneThirdX = playableMargin + (playableWidth/3)
+        //twoThirdX = playableMargin + (playableWidth*(2/3))
         
         TheGameScene?.backgroundColor = SKColor.whiteColor()
         
@@ -49,6 +47,7 @@ class World: SKNode {
         addChild(background)
         
         CreateKangaroo()
+        CreateDropletLayer()
         
     }
     
@@ -60,6 +59,13 @@ class World: SKNode {
         Kang = Kangaroo()
         if let kangaroo = Kang {
             self.addChild(kangaroo)
+        }
+    }
+    
+    private func CreateDropletLayer() {
+        Droplets = DropletLayer()
+        if let drops = Droplets {
+            self.addChild(drops)
         }
     }
     

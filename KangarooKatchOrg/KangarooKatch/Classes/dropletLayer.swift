@@ -8,11 +8,10 @@
 
 import SpriteKit
 
-var dropletRect: CGRect = CGRectNull
 var catchZoneRect: CGRect = CGRectNull
 var fadeZoneRect: CGRect = CGRectNull
 
-class dropletLayer: SKNode {
+class DropletLayer: SKNode {
     
     
     required init?(coder aDecoder: NSCoder) {
@@ -27,10 +26,7 @@ class dropletLayer: SKNode {
         self.zPosition = 50
         
         let size = TheGameScene?.size
-        
-        dropletRect = CGRect(x: playableMargin, y: dropletCatchBoundaryY,
-            width: playableWidth,
-            height: size!.height - dropletCatchBoundaryY)
+      
         catchZoneRect = CGRect(x: playableMargin, y: dropletCatchBoundaryY - 5,
             width: playableWidth,
             height: 10)

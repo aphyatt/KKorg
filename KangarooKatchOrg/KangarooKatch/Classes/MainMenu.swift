@@ -164,16 +164,15 @@ class MainMenu: SKScene {
             
             var myScene: SKScene!
             if(classicRect.contains(touchLocation)) {
-                myScene = ClassicGameScene(size: self.size, difficulty: 3, joeys: 100, controls: gameControls)
+                TheGameStatus.CurrGameMode = .Classic
+                myScene = ClassicGameScene(size: self.size, difficulty: 3, joeys: 100, controls: TheGameStatus.CurrGameControls)
                 myScene.scaleMode = self.scaleMode
                 let reveal = SKTransition.flipHorizontalWithDuration(0.5)
                 self.view?.presentScene(myScene, transition: reveal)
             }
             else if(endlessRect.contains(touchLocation)) {
-                if gameControls == .Thumb { println("One Hand") }
-                if gameControls == .TwoThumbs { println("Two Hands") }
-               
-                myScene = GameScene(size: self.size, controls: gameControls)
+                TheGameStatus.CurrGameMode = .Endless
+                myScene = GameScene(size: self.size)
                 myScene.scaleMode = self.scaleMode
                 let reveal = SKTransition.flipHorizontalWithDuration(0.5)
                 self.view?.presentScene(myScene, transition: reveal)

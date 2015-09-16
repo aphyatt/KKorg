@@ -10,10 +10,6 @@ import SpriteKit
 
 class Kangaroo: SKNode {
     
-    let leftColX: CGFloat
-    let midColX: CGFloat
-    let rightColX: CGFloat
-    
     var leftTouch: Bool = false
     var rightTouch: Bool = false
     
@@ -30,10 +26,6 @@ class Kangaroo: SKNode {
         
         let size = TheGameScene?.size
         
-        leftColX = (size!.width/2) - (dropletRect.width/3.5)
-        midColX = size!.width/2
-        rightColX = (size!.width/2) + (dropletRect.width/3.5)
-        
         super.init()
         
         self.name = "kangaroo"
@@ -47,34 +39,26 @@ class Kangaroo: SKNode {
     }
     
     func update(currentTime: CFTimeInterval) {
-        var kangSpeed: NSTimeInterval
-        /*
-        if let cs = controlSettings {
-            switch cs {
-            case .TwoThumbs:
-                kangSpeed = 0.1
-            case .Thumb:
-                kangSpeed = 0.05
-                break
-            }
-        }
-        */
         
-        kangSpeed = 0.05
+        var kangSpeed: NSTimeInterval?
+        switch TheGameStatus.CurrGameControls {
+        case .TwoThumbs:
+            kangSpeed = 0.1
+        case .Thumb:
+            kangSpeed = 0.05
+            break
+        }
         
         if leftTouch && (kangPos != 1) {
-            println("move left")
-            self.runAction(SKAction.moveToX(leftColX, duration: kangSpeed))
+            kangaroo.runAction(SKAction.moveToX(leftColX, duration: kangSpeed!))
             kangPos = 1
         }
         if rightTouch && (kangPos != 3) {
-            println("move right")
-            self.runAction(SKAction.moveToX(rightColX, duration: kangSpeed))
+            kangaroo.runAction(SKAction.moveToX(rightColX, duration: kangSpeed!))
             kangPos = 3
         }
         if ((!leftTouch && !rightTouch) || numFingers == 0) && (kangPos != 2) {
-            println("move center")
-            self.runAction(SKAction.moveToX(midColX, duration: kangSpeed))
+            kangaroo.runAction(SKAction.moveToX(midColX, duration: kangSpeed!))
             kangPos = 2
         }
         
@@ -89,58 +73,52 @@ class Kangaroo: SKNode {
     }
     
     func sceneTouched(touchLocation:CGPoint) {
-        println("touched")
-        if let cs = controlSettings {
-            switch cs {
-            case .TwoThumbs:
-                if leftRect!.contains(touchLocation) {
-                    leftTouch = true
-                    rightTouch = false
-                }
-                if rightRect!.contains(touchLocation) {
-                    rightTouch = true
-                    leftTouch = false
-                }
-                break
-            case .Thumb:
-                if touchLocation.x < oneThirdX {
-                    println("left touch")
-                    leftTouch = true
-                    rightTouch = false
-                }
-                if touchLocation.x > twoThirdX {
-                    println("right touch")
-                    rightTouch = true
-                    leftTouch = false
-                }
-                break
+        println("\(touchLocation)")
+        switch TheGameStatus.CurrGameControls {
+        case .TwoThumbs:
+            if leftRect!.contains(touchLocation) {
+                leftTouch = true
+                rightTouch = false
             }
-            
+            if rightRect!.contains(touchLocation) {
+                rightTouch = true
+                leftTouch = false
+            }
+            break
+        case .Thumb:
+            if touchLocation.x < oneThirdX {
+                leftTouch = true
+                rightTouch = false
+            }
+            if touchLocation.x > twoThirdX {
+                rightTouch = true
+                leftTouch = false
+            }
+            break
         }
+        
     }
     
     func sceneUntouched(touchLocation:CGPoint) {
         
-        if let cs = controlSettings {
-            switch cs {
-            case .TwoThumbs:
-                let leftEndTouch = leftRect!.contains(touchLocation)
-                let rightEndTouch = rightRect!.contains(touchLocation)
-                
-                if leftEndTouch || (numFingers == 0) {
-                    leftTouch = false
-                }
-                if rightEndTouch || (numFingers == 0) {
-                    rightTouch = false
-                }
-                break
-            case .Thumb:
-                if numFingers == 0 {
-                    leftTouch = false
-                    rightTouch = false
-                }
-                break
+        switch TheGameStatus.CurrGameControls {
+        case .TwoThumbs:
+            let leftEndTouch = leftRect!.contains(touchLocation)
+            let rightEndTouch = rightRect!.contains(touchLocation)
+            
+            if leftEndTouch || (numFingers == 0) {
+                leftTouch = false
             }
+            if rightEndTouch || (numFingers == 0) {
+                rightTouch = false
+            }
+            break
+        case .Thumb:
+            if numFingers == 0 {
+                leftTouch = false
+                rightTouch = false
+            }
+            break
         }
     }
     

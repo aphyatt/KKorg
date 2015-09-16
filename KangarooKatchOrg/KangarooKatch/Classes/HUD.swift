@@ -9,8 +9,13 @@
 import SpriteKit
 
 let HUDheight: CGFloat = 120
+let horAlignModeDefault: SKLabelHorizontalAlignmentMode = .Center
+let vertAlignModeDefault: SKLabelVerticalAlignmentMode = .Baseline
 
 class HUD: SKNode {
+    
+    var classicHUD: ClassicHUD?
+    var endlessHUD: EndlessHUD?
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -25,12 +30,49 @@ class HUD: SKNode {
         
         let size = TheGameScene?.size
         
-        let HUDrect = CGRect(x: 0, y: size!.height - HUDheight, width: size!.width, height: HUDheight)
-        var HUDshape = drawRectangle(HUDrect, SKColor.blackColor(), 1.0)
-        HUDshape.fillColor = SKColor.blackColor()
-        HUDshape.zPosition = 101
-        addChild(HUDshape)
+        if TheGameStatus.CurrGameMode == .Classic {
+            CreateClassicHUD()
+        }
+        if TheGameStatus.CurrGameMode == .Endless {
+            CreateEndlessHUD()
+        }
         
+    }
+    
+    func update(currentTime: CFTimeInterval) {
+        if TheGameStatus.CurrGameMode == .Endless {
+            if let eh = endlessHUD {
+                eh.update(currentTime)
+            }
+        }
+        if TheGameStatus.CurrGameMode == .Classic {
+            if let ch = classicHUD {
+                ch.update(currentTime)
+            }
+        }
+    }
+    
+    private func CreateClassicHUD() {
+        classicHUD = ClassicHUD()
+        if let cHUD = classicHUD {
+            self.addChild(cHUD)
+        }
+    }
+    
+    private func CreateEndlessHUD() {
+        endlessHUD = EndlessHUD()
+        if let eHUD = endlessHUD {
+            self.addChild(eHUD)
+        }
+    }
+    
+    func updateScore() {
+        if TheGameStatus.CurrGameMode == .Endless {
+            endlessHUD!.updateScore()
+        }
+        if TheGameStatus.CurrGameMode == .Classic {
+            classicHUD!.updateScore()
+        }
     }
     
     func sceneTouched(touchLocation:CGPoint) {
