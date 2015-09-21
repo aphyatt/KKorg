@@ -8,6 +8,7 @@
 
 import SpriteKit
 
+/*
 class ClassicGameScene: SKScene {
     
     var gameState = GameState.GameRunning
@@ -257,7 +258,7 @@ class ClassicGameScene: SKScene {
     *********************************************************************************************************/
     override func update(currentTime: CFTimeInterval) {
         
-        switch gameState {
+        switch GS.GameState {
         case .GameRunning:
             if (totalLinesDropped - lineCountBeforeDrops) == currLinesToDrop {
                 dropNewGroup()
@@ -292,7 +293,7 @@ class ClassicGameScene: SKScene {
                 dropLines = true
                 lineCountBeforeDrops = totalLinesDropped
                 currLinesToDrop = 0
-                gameState = .GameRunning
+                GS.GameState = .GameRunning
             }
         }
     }
@@ -1025,3 +1026,5 @@ class ClassicGameScene: SKScene {
     }
     
 }
+*/
+

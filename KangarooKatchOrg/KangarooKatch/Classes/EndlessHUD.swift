@@ -8,6 +8,9 @@
 
 import SpriteKit
 
+weak var TheEndlessHUD: EndlessHUD?
+var scoreLabel: GameLabel?
+
 class EndlessHUD: SKNode {
     
     var joeyLifeStartX: CGFloat
@@ -21,7 +24,6 @@ class EndlessHUD: SKNode {
     let livesLabelY: CGFloat = 982
     let dropsLabelY: CGFloat = 942
     
-    var scoreLabel: GameLabel?
     var livesLabel: GameLabel?
     var dropsLabel: GameLabel?
     
@@ -31,12 +33,12 @@ class EndlessHUD: SKNode {
     
     override init() {
         
-        let size = TheGameScene?.size
-        
-        joeyLifeStartX = size!.width/2 + 93
-        boomerangLifeStartX = size!.width/2 + 115
+        joeyLifeStartX = GameSize!.width/2 + 93
+        boomerangLifeStartX = GameSize!.width/2 + 115
         
         super.init()
+        
+        TheEndlessHUD = self
         
         self.name = "EndlessHUD"
         self.zPosition = 200
@@ -49,11 +51,14 @@ class EndlessHUD: SKNode {
     }
     
     func update(currentTime: CFTimeInterval) {
-        
+        if scoreChange {
+            updateScore()
+            scoreChange = false
+        }
     }
     
     private func CreateScoreLabel() {
-        scoreLabel = GameLabel(text: "Score: \(TheGameStatus.CurrScore)", size: 50,
+        scoreLabel = GameLabel(text: "Score: \(GS.CurrScore)", size: 50,
             horAlignMode: .Left, vertAlignMode: .Center,
             color: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
             pos: CGPoint(x: scoreLabelX, y: scoreLabelY), zPosition: self.zPosition + 1)
@@ -127,10 +132,13 @@ class EndlessHUD: SKNode {
         
     }
     
+    func removeLife(child: String) {
+        childNodeWithName("drop\(GS.CurrJoeyLives)")?.removeFromParent()
+    }
+    
     func updateScore() {
         if let sl = scoreLabel {
-            TheGameStatus.CurrScore++
-            sl.changeText("Score: \(TheGameStatus.CurrScore)")
+            sl.text = "Score: \(GS.CurrScore)"
         
             let grow = SKAction.scaleBy(1.05, duration: 0.15)
             let adjust = SKAction.runBlock({
@@ -141,7 +149,6 @@ class EndlessHUD: SKNode {
             
             sl.runAction(scoreAction)
         }
-        
     }
 
 }

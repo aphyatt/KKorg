@@ -184,12 +184,12 @@ class Settings: SKScene {
             var controlChangeMessage: String!
             var controlChange: Bool = false
             if(thumbButtonRect.contains(touchLocation)) {
-                TheGameStatus.CurrGameControls = .Thumb
+                GS.GameControls = .Thumb
                 controlChangeMessage = "Controls Changed: One Hand"
                 controlChange = true
             }
             else if(twoThumbsButtonRect.contains(touchLocation)) {
-                TheGameStatus.CurrGameControls = .TwoThumbs
+                GS.GameControls = .TwoThumbs
                 controlChangeMessage = "Controls Changed: Two Hands"
                 controlChange = true
             }

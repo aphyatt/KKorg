@@ -70,19 +70,19 @@ class World: SKNode {
     }
     
     func sceneTouched(touchLocation:CGPoint) {
-        if gameState == .GameRunning {
+        if GS.GameState == .GameRunning {
             Kang!.sceneTouched(touchLocation)
         }
     }
     
     func sceneUntouched(touchLocation:CGPoint) {
-        if gameState == .GameRunning {
+        if GS.GameState == .GameRunning {
             Kang!.sceneUntouched(touchLocation)
         }
     }
     
     func trackThumb(touchLocation:CGPoint) {
-        if gameState == .GameRunning {
+        if GS.GameState == .GameRunning {
             Kang!.trackThumb(touchLocation)
         }
     }

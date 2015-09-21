@@ -9,18 +9,18 @@
 import Foundation
 import SpriteKit
 
-enum Control {
+enum ControlType {
     case Thumb
     case TwoThumbs
 }
 
-enum GameState {
+enum GameStateType {
     case GameRunning
     case GameOver
     case Paused
 }
 
-enum GameMode {
+enum GameModeType {
     case Classic
     case Endless
 }

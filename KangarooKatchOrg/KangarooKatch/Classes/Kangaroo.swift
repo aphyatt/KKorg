@@ -8,14 +8,15 @@
 
 import SpriteKit
 
+var kangPosX: CGFloat = 0
+weak var TheKangaroo: Kangaroo?
+
 class Kangaroo: SKNode {
     
     var leftTouch: Bool = false
     var rightTouch: Bool = false
     
     var kangPos: Int = 2
-    var kangPosX: CGFloat = 0
-    
     let kangaroo = SKSpriteNode(imageNamed: "Kangaroo")
     
     required init?(coder aDecoder: NSCoder) {
@@ -24,24 +25,28 @@ class Kangaroo: SKNode {
     
     override init() {
         
-        let size = TheGameScene?.size
-        
         super.init()
+        
+        TheKangaroo = self
         
         self.name = "kangaroo"
         self.zPosition = 10
         
-        kangaroo.position = CGPoint(x: size!.width/2, y: dropletCatchBoundaryY)
+        kangaroo.position = CGPoint(x: GameSize!.width/2, y: dropletCatchBoundaryY)
         kangaroo.zPosition = 11
         kangaroo.setScale(0.7)
         addChild(kangaroo)
         
     }
     
+    override func runAction(action: SKAction!) {
+        kangaroo.runAction(action)
+    }
+    
     func update(currentTime: CFTimeInterval) {
         
         var kangSpeed: NSTimeInterval?
-        switch TheGameStatus.CurrGameControls {
+        switch GS.GameControls {
         case .TwoThumbs:
             kangSpeed = 0.1
         case .Thumb:
@@ -74,7 +79,7 @@ class Kangaroo: SKNode {
     
     func sceneTouched(touchLocation:CGPoint) {
         println("\(touchLocation)")
-        switch TheGameStatus.CurrGameControls {
+        switch GS.GameControls {
         case .TwoThumbs:
             if leftRect!.contains(touchLocation) {
                 leftTouch = true
@@ -101,7 +106,7 @@ class Kangaroo: SKNode {
     
     func sceneUntouched(touchLocation:CGPoint) {
         
-        switch TheGameStatus.CurrGameControls {
+        switch GS.GameControls {
         case .TwoThumbs:
             let leftEndTouch = leftRect!.contains(touchLocation)
             let rightEndTouch = rightRect!.contains(touchLocation)

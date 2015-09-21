@@ -16,7 +16,6 @@ class ClassicHUD: SKNode {
     
     override init() {
         
-        let size = TheGameScene?.size
         
         super.init()
         

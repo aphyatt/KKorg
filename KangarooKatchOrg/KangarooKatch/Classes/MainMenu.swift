@@ -164,14 +164,14 @@ class MainMenu: SKScene {
             
             var myScene: SKScene!
             if(classicRect.contains(touchLocation)) {
-                TheGameStatus.CurrGameMode = .Classic
-                myScene = ClassicGameScene(size: self.size, difficulty: 3, joeys: 100, controls: TheGameStatus.CurrGameControls)
+                GS.GameMode = .Classic
+                //myScene = GameScene(size: self.size, difficulty: 3, joeys: 100)
                 myScene.scaleMode = self.scaleMode
                 let reveal = SKTransition.flipHorizontalWithDuration(0.5)
                 self.view?.presentScene(myScene, transition: reveal)
             }
             else if(endlessRect.contains(touchLocation)) {
-                TheGameStatus.CurrGameMode = .Endless
+                GS.GameMode = .Endless
                 myScene = GameScene(size: self.size)
                 myScene.scaleMode = self.scaleMode
                 let reveal = SKTransition.flipHorizontalWithDuration(0.5)

@@ -13,6 +13,8 @@ class GameLabel: SKLabelNode {
     let font: String = "Soup of Justice"
     let label: SKLabelNode
     let labelS: SKLabelNode
+    var m_Text: String?
+    var m_zPosition: CGFloat?
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -22,8 +24,11 @@ class GameLabel: SKLabelNode {
         horAlignMode: SKLabelHorizontalAlignmentMode, vertAlignMode: SKLabelVerticalAlignmentMode,
         color: UIColor, shadowColor: UIColor, pos: CGPoint, zPosition: CGFloat) {
             
+            m_Text = text
+            m_zPosition = zPosition
+            
             label = SKLabelNode(fontNamed: font)
-            label.text = text
+            label.text = m_Text!
             label.fontSize = size
             label.horizontalAlignmentMode = horAlignMode
             label.verticalAlignmentMode = vertAlignMode
@@ -32,7 +37,7 @@ class GameLabel: SKLabelNode {
             label.zPosition = zPosition + 1
             
             labelS = SKLabelNode(fontNamed: font)
-            labelS.text = text
+            labelS.text = m_Text!
             labelS.fontSize = size
             labelS.horizontalAlignmentMode = horAlignMode
             labelS.verticalAlignmentMode = vertAlignMode
@@ -46,15 +51,28 @@ class GameLabel: SKLabelNode {
             addChild(labelS)
     }
     
-    func changeText(text: String) {
-        label.text = text
-        labelS.text = text
+    override var text: String {
+        get { return m_Text! }
+        set {
+            m_Text = newValue
+            label.text = m_Text!
+            labelS.text = m_Text!
+        }
+    }
+    
+    override var zPosition: CGFloat {
+        get { return m_zPosition! }
+        set {
+            m_zPosition = newValue
+            label.zPosition = m_zPosition! + 1
+            labelS.zPosition = m_zPosition!
+        }
     }
     
     func changePositionX(posX: CGFloat) {
         var adjustX: CGFloat = 0
-        if TheGameStatus.CurrScore >= 10 { adjustX = 10 }
-        if TheGameStatus.CurrScore >= 100 { adjustX = 20 }
+        if GS.CurrScore >= 10 { adjustX = 10 }
+        if GS.CurrScore >= 100 { adjustX = 20 }
         
         label.position.x = posX - adjustX
         labelS.position.x = posX + 2 - adjustX

@@ -28,24 +28,22 @@ class HUD: SKNode {
         self.name = "HUD"
         self.zPosition = 100
         
-        let size = TheGameScene?.size
-        
-        if TheGameStatus.CurrGameMode == .Classic {
+        if GS.GameMode == .Classic {
             CreateClassicHUD()
         }
-        if TheGameStatus.CurrGameMode == .Endless {
+        if GS.GameMode == .Endless {
             CreateEndlessHUD()
         }
         
     }
     
     func update(currentTime: CFTimeInterval) {
-        if TheGameStatus.CurrGameMode == .Endless {
+        if GS.GameMode == .Endless {
             if let eh = endlessHUD {
                 eh.update(currentTime)
             }
         }
-        if TheGameStatus.CurrGameMode == .Classic {
+        if GS.GameMode == .Classic {
             if let ch = classicHUD {
                 ch.update(currentTime)
             }
@@ -67,10 +65,10 @@ class HUD: SKNode {
     }
     
     func updateScore() {
-        if TheGameStatus.CurrGameMode == .Endless {
+        if GS.GameMode == .Endless {
             endlessHUD!.updateScore()
         }
-        if TheGameStatus.CurrGameMode == .Classic {
+        if GS.GameMode == .Classic {
             classicHUD!.updateScore()
         }
     }

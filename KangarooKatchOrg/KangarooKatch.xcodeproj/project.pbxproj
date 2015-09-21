@@ -31,6 +31,7 @@
 		ADC5669C1BA8E61700344E1C /* ClassicHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC5669B1BA8E61700344E1C /* ClassicHUD.swift */; };
 		ADC5669E1BA8E6B500344E1C /* EndlessHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC5669D1BA8E6B500344E1C /* EndlessHUD.swift */; };
 		ADC566A01BA8EF7A00344E1C /* GameLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC5669F1BA8EF7A00344E1C /* GameLabel.swift */; };
+		ADE458CC1BAF6D4E00E13210 /* GameOverLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE458CB1BAF6D4E00E13210 /* GameOverLayer.swift */; };
 		ADEF4CFE1B57155E00996C69 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADEF4CFC1B57155E00996C69 /* Main.storyboard */; };
 		ADEF4D001B57155E00996C69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ADEF4CFF1B57155E00996C69 /* Images.xcassets */; };
 		ADEF4D031B57155E00996C69 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = ADEF4D011B57155E00996C69 /* LaunchScreen.xib */; };
@@ -85,6 +86,7 @@
 		ADC5669B1BA8E61700344E1C /* ClassicHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassicHUD.swift; sourceTree = "<group>"; };
 		ADC5669D1BA8E6B500344E1C /* EndlessHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndlessHUD.swift; sourceTree = "<group>"; };
 		ADC5669F1BA8EF7A00344E1C /* GameLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameLabel.swift; sourceTree = "<group>"; };
+		ADE458CB1BAF6D4E00E13210 /* GameOverLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverLayer.swift; sourceTree = "<group>"; };
 		ADEF4CEF1B57155E00996C69 /* KangarooKatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KangarooKatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADEF4CFD1B57155E00996C69 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		ADEF4CFF1B57155E00996C69 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				ADC566931BA7858D00344E1C /* HUD.swift */,
 				ADC5669B1BA8E61700344E1C /* ClassicHUD.swift */,
 				ADC5669D1BA8E6B500344E1C /* EndlessHUD.swift */,
+				ADE458CB1BAF6D4E00E13210 /* GameOverLayer.swift */,
 				ADC5669F1BA8EF7A00344E1C /* GameLabel.swift */,
 				ADC566991BA8E21100344E1C /* GameStatus.swift */,
 				AD5A6BF11B7D983900BEFB5E /* Settings.swift */,
@@ -375,6 +378,7 @@
 				AD5A6BF21B7D983900BEFB5E /* Settings.swift in Sources */,
 				AD917D8F1B5E019E00B4E919 /* GameViewController.swift in Sources */,
 				ADC5669E1BA8E6B500344E1C /* EndlessHUD.swift in Sources */,
+				ADE458CC1BAF6D4E00E13210 /* GameOverLayer.swift in Sources */,
 				AD5A6BE11B7D6C0600BEFB5E /* ClassicGameScene.swift in Sources */,
 				ADC566981BA7BAD400344E1C /* DropletLayer.swift in Sources */,
 				AD917D921B5E019E00B4E919 /* Variables.swift in Sources */,

@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 ADAM HYATT. All rights reserved.
 //
 
-var TheGameStatus = GameStatus()
+import SpriteKit
+var GS = GameStatus()
+var scoreChange: Bool = false
 
 class GameStatus {
     //endless
@@ -20,8 +22,21 @@ class GameStatus {
     
     var CurrScore = 0
     var HiScore = 0
+    var DiffLevel = 0
     
-    var CurrGameControls: Control = .Thumb
-    var CurrGameMode: GameMode = .Classic
+    var GameControls: ControlType = .Thumb
+    var GameMode: GameModeType = .Classic
+    var GameState: GameStateType = .GameRunning
+    
+    //Droplet Status
+    var timeBetweenLines: NSTimeInterval = 0.5
+    var totalLinesDropped: Int = 0
+    var currLinesToDrop: Int = 0
+    var lineCountBeforeDrops: Int = 0
+    var eggPercentage: Int = 100
+    var groupWaitTimeMin: CGFloat = 2.0
+    var groupWaitTimeMax: CGFloat = 3.0
+    var groupAmtMin: Int = 2
+    var groupAmtMax: Int = 3
     
 }
