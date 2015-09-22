@@ -31,7 +31,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var GameWorld: World?
     var HUDdisplay: HUD?
     var Drops: DropletLayer?
-    var GameOverScene: GameOverLayer?
+    var GameOver: GameOverLayer?
     
     /************************************ Init/Update Functions ***************************************/
     
@@ -43,8 +43,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         CreateWorld()
         CreateHUD()
         CreateDropletLayer()
+        CreateGameOver()
         
         debugDrawPlayableArea()
+    }
+    
+    func restart() {
+        removeAllActions()
+        removeAllChildren()
+        CreateWorld()
+        CreateHUD()
+        CreateDropletLayer()
+        CreateGameOver()
     }
     
     private func CreateWorld() {
@@ -69,8 +79,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func CreateGameOver() {
-        GameOverScene = GameOverLayer()
-        if let go = GameOverScene {
+        GameOver = GameOverLayer()
+        if let go = GameOver {
             self.addChild(go)
         }
     }
@@ -114,12 +124,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             Drops!.update(currentTime)
             break
         case .Paused:
+            dropLines = false
             break
         case .GameOver:
-            if startGameOver {
-                CreateGameOver()
-                startGameOver = false
-            }
+            dropLines = false
+            GameOver!.update(currentTime)
             break
         }
         
@@ -130,13 +139,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let touchLocation = touch.locationInNode(self)
         numFingers += touches.count
         
-        if worldRect.contains(touchLocation) && GS.GameState == .GameRunning {
-            GameWorld!.sceneTouched(touchLocation)
+        switch GS.GameState {
+        case .GameRunning:
+            if worldRect.contains(touchLocation) {
+                GameWorld!.sceneTouched(touchLocation)
+            }
+            if hudRect.contains(touchLocation) {
+                HUDdisplay!.sceneTouched(touchLocation)
+            }
+            break
+        case .Paused:
+            break
+        case .GameOver:
+            GameOver!.sceneTouched(touchLocation)
+            break
         }
-        if worldRect.contains(touchLocation) && GS.GameState == .GameRunning {
-            HUDdisplay!.sceneTouched(touchLocation)
-        }
-        //other statused go to pausedScreen.sceneTouched, gameOver.sceneTouched, ect.
        
     }
     
@@ -153,8 +170,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let touchLocation = touch.locationInNode(self)
         numFingers -= touches.count
         
-        if worldRect.contains(touchLocation) && GS.GameState == .GameRunning {
-            GameWorld!.sceneUntouched(touchLocation)
+        switch GS.GameState {
+        case .GameRunning:
+            if worldRect.contains(touchLocation) {
+                GameWorld!.sceneUntouched(touchLocation)
+            }
+            if hudRect.contains(touchLocation) {
+                HUDdisplay!.sceneUntouched(touchLocation)
+            }
+            break
+        case .Paused:
+            break
+        case .GameOver:
+            GameOver!.sceneUntouched(touchLocation)
+            break
         }
     }
     

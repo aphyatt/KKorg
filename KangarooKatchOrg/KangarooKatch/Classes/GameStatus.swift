@@ -15,7 +15,7 @@ class GameStatus {
     let MaxJoeyLives = 10
     let MaxBoomerangLives = 3
     var CurrJoeyLives = 10
-    var CurrBoomerangeLives = 3
+    var CurrBoomerangLives = 3
     
     //classic
     var JoeysLeft = 100

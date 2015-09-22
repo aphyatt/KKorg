@@ -15,6 +15,7 @@ class GameLabel: SKLabelNode {
     let labelS: SKLabelNode
     var m_Text: String?
     var m_zPosition: CGFloat?
+    var m_alpha: CGFloat?
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -26,6 +27,7 @@ class GameLabel: SKLabelNode {
             
             m_Text = text
             m_zPosition = zPosition
+            m_alpha = 1.0
             
             label = SKLabelNode(fontNamed: font)
             label.text = m_Text!
@@ -60,6 +62,15 @@ class GameLabel: SKLabelNode {
         }
     }
     
+    override var alpha: CGFloat {
+        get { return m_alpha! }
+        set {
+            m_alpha = newValue
+            label.alpha = m_alpha!
+            labelS.alpha = m_alpha!
+        }
+    }
+    
     override var zPosition: CGFloat {
         get { return m_zPosition! }
         set {
@@ -71,8 +82,8 @@ class GameLabel: SKLabelNode {
     
     func changePositionX(posX: CGFloat) {
         var adjustX: CGFloat = 0
-        if GS.CurrScore >= 10 { adjustX = 10 }
-        if GS.CurrScore >= 100 { adjustX = 20 }
+        if GS.CurrScore >= 10 { adjustX = 3 }
+        if GS.CurrScore >= 100 { adjustX = 6 }
         
         label.position.x = posX - adjustX
         labelS.position.x = posX + 2 - adjustX

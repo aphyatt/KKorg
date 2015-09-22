@@ -12,6 +12,8 @@ let HUDheight: CGFloat = 120
 let horAlignModeDefault: SKLabelHorizontalAlignmentMode = .Center
 let vertAlignModeDefault: SKLabelVerticalAlignmentMode = .Baseline
 
+var TheHUD: HUD?
+
 class HUD: SKNode {
     
     var classicHUD: ClassicHUD?
@@ -24,6 +26,8 @@ class HUD: SKNode {
     override init() {
         
         super.init()
+        
+        TheHUD = self
         
         self.name = "HUD"
         self.zPosition = 100
@@ -67,9 +71,6 @@ class HUD: SKNode {
     func updateScore() {
         if GS.GameMode == .Endless {
             endlessHUD!.updateScore()
-        }
-        if GS.GameMode == .Classic {
-            classicHUD!.updateScore()
         }
     }
     

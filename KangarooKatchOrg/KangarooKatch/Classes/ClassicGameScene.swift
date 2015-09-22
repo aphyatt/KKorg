@@ -27,8 +27,6 @@ class ClassicGameScene: SKScene {
     let playableMargin: CGFloat
     
     let kangaroo = SKSpriteNode(imageNamed: "Kangaroo")
-    let horAlignModeDefault: SKLabelHorizontalAlignmentMode = .Center
-    let vertAlignModeDefault: SKLabelVerticalAlignmentMode = .Baseline
     
     let dropletCatchBoundaryY: CGFloat = 175
     let dropletFadeBoundaryY: CGFloat = 65
@@ -61,15 +59,6 @@ class ClassicGameScene: SKScene {
     var kangPos: Int = 2
     var kangPosX: CGFloat = 0
     var numFingers: Int = 0
-    
-    //Score and Lives
-    var score: Int = 0
-    var joeyCount: Int
-    let scoreLabelX: CGFloat
-    let joeyCountX: CGFloat
-    let scoreLabelY: CGFloat = 959
-    var joeyCountLabel : SKLabelNode!
-    var joeyCountLabelS : SKLabelNode!
     
     //Gameover vars
     var restartTap: Bool = false

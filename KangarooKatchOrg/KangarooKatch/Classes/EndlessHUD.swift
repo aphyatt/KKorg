@@ -18,7 +18,7 @@ class EndlessHUD: SKNode {
     
     var dropsLeft: Int = 10
     var livesLeft: Int = 3
-    let scoreLabelX: CGFloat = oneThirdX - 160
+    let scoreLabelX: CGFloat = oneThirdX - 70
     let scoreLabelY: CGFloat = 962
     let livesDropsX: CGFloat = twoThirdX - 25
     let livesLabelY: CGFloat = 982
@@ -59,7 +59,7 @@ class EndlessHUD: SKNode {
     
     private func CreateScoreLabel() {
         scoreLabel = GameLabel(text: "Score: \(GS.CurrScore)", size: 50,
-            horAlignMode: .Left, vertAlignMode: .Center,
+            horAlignMode: .Center, vertAlignMode: .Center,
             color: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
             pos: CGPoint(x: scoreLabelX, y: scoreLabelY), zPosition: self.zPosition + 1)
         if let sl = scoreLabel {
@@ -133,7 +133,7 @@ class EndlessHUD: SKNode {
     }
     
     func removeLife(child: String) {
-        childNodeWithName("drop\(GS.CurrJoeyLives)")?.removeFromParent()
+        childNodeWithName(child)?.removeFromParent()
     }
     
     func updateScore() {
