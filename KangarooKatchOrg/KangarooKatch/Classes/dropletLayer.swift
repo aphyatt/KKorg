@@ -481,7 +481,8 @@ class DropletLayer: SKNode {
         joey.runAction(SKAction.removeFromParent())
         
         GS.CurrScore++
-        scoreChange = true
+        println("Score: \(GS.CurrScore)")
+        endlessScoreChange = true
         
     }
     

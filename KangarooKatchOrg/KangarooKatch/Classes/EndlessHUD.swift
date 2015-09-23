@@ -51,9 +51,9 @@ class EndlessHUD: SKNode {
     }
     
     func update(currentTime: CFTimeInterval) {
-        if scoreChange {
+        if endlessScoreChange {
             updateScore()
-            scoreChange = false
+            endlessScoreChange = false
         }
     }
     

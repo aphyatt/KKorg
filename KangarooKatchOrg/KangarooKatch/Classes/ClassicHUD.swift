@@ -55,13 +55,18 @@ class ClassicHUD: SKNode {
         let center = SKAction.moveToX(GameSize!.width/2, duration: 0)
         let adjust = SKAction.runBlock({
             self.joeyCountLabel!.labelS.position.x += 2
-            self.joeyCountLabel!.labelS.position.y -= 2
         })
         let shrink = grow.reversedAction()
         let scoreAction = SKAction.sequence([grow, center, adjust, shrink])
         joeyCountLabel!.runAction(scoreAction)
         
-        if (GS.JoeysLeft == 0) { GS.GameState = .GameOver }
+        if (GS.JoeysLeft == 0) {
+            let noDrop = SKAction.runBlock({dropLines = false})
+            let wait = SKAction.waitForDuration(NSTimeInterval(2))
+            let stateSwitch = SKAction.runBlock({GS.GameState = .GameOver})
+            let classicGameOver = SKAction.sequence([noDrop, wait, stateSwitch])
+            self.runAction(classicGameOver)
+        }
         
     }
     

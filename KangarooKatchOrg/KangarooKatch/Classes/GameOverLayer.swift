@@ -17,6 +17,9 @@ class GameOverLayer: SKNode {
     var startGameOver: Bool = false
     
     var gameOverLabel: GameLabel?
+    var tempScoreLabel: GameLabel?
+    
+    var scoreTmp: Int = 0
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -75,12 +78,25 @@ class GameOverLayer: SKNode {
         }
     }
     
+    private func CreateTempScoreLabel() {
+        tempScoreLabel = GameLabel(text: "Score: 0", size: 60,
+            horAlignMode: .Center, vertAlignMode: .Center,
+            color: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
+            pos: CGPoint(x: GameSize!.width/2, y: 780), zPosition: self.zPosition + 1)
+        if let tsl = tempScoreLabel {
+            tsl.runAction(SKAction.scaleYTo(1.3, duration: 0.0))
+            tsl.alpha = 0.0
+            self.addChild(tsl)
+        }
+    }
+    
     func restartGame() {
         //remove all nodes
         removeAllActions()
         removeAllChildren()
         //add background and kangaroo
         GS.CurrScore = 0
+        GS.JoeysLeft = 100 //CHANGE LATER
         GS.DiffLevel = V_EASY
         TheGameScene!.restart()
         //set difficulty, speeds, ect.
@@ -155,58 +171,45 @@ class GameOverLayer: SKNode {
     }
     
     func classicGameOver() {
-        /*
-        freezeDroplets()
+        println("1")
+        TheDropletLayer?.freezeDroplets()
         let shade = drawRectangle(fullRect, SKColor.grayColor(), 1.0)
         shade.fillColor = SKColor.grayColor()
         shade.alpha = 0.4
-        shade.zPosition = 6
+        shade.zPosition = self.zPosition
         addChild(shade)
+        println("2")
         
-        var scoreTmp: Int = 0
-        let scoreLabelA: [SKLabelNode] = createShadowLabel(font: "Soup of Justice", text: "Score: \(scoreTmp)",
-            fontSize: 60,
-            horAlignMode: .Left, vertAlignMode: .Center,
-            labelColor: SKColor.whiteColor(), shadowColor: SKColor.grayColor(),
-            name: "scoreLabel",
-            positon: CGPoint(x: GameSize!.width/2, y: 780),
-            shadowZPos: 7, shadowOffset: 4)
-        scoreLabelA[0].runAction(SKAction.scaleYTo(1.3, duration: 0.0))
-        scoreLabelA[1].runAction(SKAction.scaleYTo(1.3, duration: 0.0))
-        scoreLabelA[0].alpha = 0.0
-        scoreLabelA[1].alpha = 0.0
-        addChild(scoreLabelA[0])
-        addChild(scoreLabelA[1])
+        CreateTempScoreLabel()
+        println("3")
         
         //fade in score
         let wait = SKAction.waitForDuration(0.5)
         let fadeIn = SKAction.fadeAlphaTo(1.0, duration: 2.0)
-        let scoreAction = SKAction.sequence([wait, fadeIn])
-        let Sgroup = SKAction.group([SKAction.runBlock({scoreLabelA[0].runAction(scoreAction)}),
-            SKAction.runBlock({scoreLabelA[1].runAction(scoreAction)})])
-        runAction(Sgroup)
+        let fadeAction = SKAction.sequence([wait, fadeIn])
+        tempScoreLabel!.runAction(fadeAction)
         
-        while scoreTmp < GS.CurrScore {
-            scoreLabelA[0].text = "Score: \(score)"
-            scoreLabelA[1].text = "Score: \(score)"
-            
-            var adjustX: CGFloat = 0
-            if scoreTmp >= 10 { adjustX = 10 }
-            if scoreTmp >= 100 { adjustX = 20 }
-            let grow = SKAction.scaleBy(1.05, duration: 0.15)
-            let adjust = SKAction.runBlock({
-                scoreLabelA[0].position.x = self.size.width/2 - adjustX
-                scoreLabelA[1].position.x = self.size.width/2 + 2 - adjustX
-            })
-            let shrink = grow.reversedAction()
-            let scoreAction = SKAction.sequence([grow, adjust, shrink])
-            
-            let groupScore = SKAction.group([SKAction.runBlock({scoreLabelA[0].runAction(scoreAction)}),
-                SKAction.runBlock({scoreLabelA[1].runAction(scoreAction)})])
-            SKAction.sequence([groupScore, SKAction.waitForDuration(0.2)])
-            scoreTmp++
-        }
+        println("CurrentScore: \(GS.CurrScore)")
         
+        let changeScore = SKAction.runBlock({
+            //will add twice because of shadow and main label
+            self.scoreTmp++
+            self.tempScoreLabel!.text = "Score: \(self.scoreTmp/2)"
+        })
+        let grow = SKAction.scaleBy(1.02, duration: 0.05)
+        
+        let test = SKAction.runBlock({
+            println("hello")
+        })
+        
+        let scoreAction = SKAction.group([changeScore, grow])
+        let waitBetweenScoreAction = SKAction.waitForDuration(0.07)
+       
+        let repeatAction = SKAction.repeatAction(SKAction.sequence([scoreAction, waitBetweenScoreAction]), count: GS.CurrScore)
+        let finalAction = SKAction.sequence([SKAction.waitForDuration(2.5), repeatAction])
+        tempScoreLabel!.runAction(finalAction)
+        
+        /*
         //tap anywhere to restart
         let tapRestart = createShadowLabel(font: "Soup of Justice", text: "TAP ANYWHERE TO RESTART",
             fontSize: 20,
@@ -227,8 +230,6 @@ class GameOverLayer: SKNode {
         let tapAction = SKAction.sequence([wait3, SKAction.repeatActionForever(blink)])
         tapRestart[0].runAction(tapAction)
         tapRestart[1].runAction(tapAction)
-
-
         */
     }
     

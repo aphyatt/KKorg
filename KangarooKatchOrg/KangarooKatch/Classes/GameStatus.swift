@@ -8,7 +8,7 @@
 
 import SpriteKit
 var GS = GameStatus()
-var scoreChange: Bool = false
+var endlessScoreChange: Bool = false
 
 class GameStatus {
     //endless
