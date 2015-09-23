@@ -171,17 +171,14 @@ class GameOverLayer: SKNode {
     }
     
     func classicGameOver() {
-        println("1")
         TheDropletLayer?.freezeDroplets()
         let shade = drawRectangle(fullRect, SKColor.grayColor(), 1.0)
         shade.fillColor = SKColor.grayColor()
         shade.alpha = 0.4
         shade.zPosition = self.zPosition
         addChild(shade)
-        println("2")
         
         CreateTempScoreLabel()
-        println("3")
         
         //fade in score
         let wait = SKAction.waitForDuration(0.5)
@@ -189,24 +186,36 @@ class GameOverLayer: SKNode {
         let fadeAction = SKAction.sequence([wait, fadeIn])
         tempScoreLabel!.runAction(fadeAction)
         
-        println("CurrentScore: \(GS.CurrScore)")
-        
         let changeScore = SKAction.runBlock({
             //will add twice because of shadow and main label
             self.scoreTmp++
             self.tempScoreLabel!.text = "Score: \(self.scoreTmp/2)"
         })
-        let grow = SKAction.scaleBy(1.02, duration: 0.05)
+        let grow = SKAction.scaleBy(1.005, duration: 0.05)
         
         let test = SKAction.runBlock({
             println("hello")
         })
         
         let scoreAction = SKAction.group([changeScore, grow])
-        let waitBetweenScoreAction = SKAction.waitForDuration(0.07)
-       
-        let repeatAction = SKAction.repeatAction(SKAction.sequence([scoreAction, waitBetweenScoreAction]), count: GS.CurrScore)
-        let finalAction = SKAction.sequence([SKAction.waitForDuration(2.5), repeatAction])
+        let waitFirstScoreAction = SKAction.waitForDuration(0.5)
+        let waitQuickScoreAction = SKAction.waitForDuration(0.01)
+        let beginScoreAction = SKAction.sequence([scoreAction, waitFirstScoreAction])
+        let endScoreAction2 = SKAction.sequence([SKAction.waitForDuration(0.5), scoreAction])
+        var finalScoreAction: SKAction
+        var repeatScore: SKAction
+        var endScoreAction1: SKAction
+        if GS.CurrScore > 4 {
+            endScoreAction1 = SKAction.sequence([SKAction.waitForDuration(0.49), scoreAction])
+            repeatScore = SKAction.repeatAction(SKAction.sequence([scoreAction, waitQuickScoreAction]), count: GS.CurrScore-4)
+            finalScoreAction = SKAction.sequence([beginScoreAction, beginScoreAction, repeatScore, endScoreAction1, endScoreAction2])
+        }
+        else {
+            endScoreAction1 = SKAction.sequence([SKAction.waitForDuration(0.2), scoreAction])
+            repeatScore = SKAction.repeatAction(SKAction.sequence([scoreAction, SKAction.waitForDuration(0.3)]), count: GS.CurrScore-1)
+            finalScoreAction = SKAction.sequence([repeatScore, endScoreAction1])
+        }
+        let finalAction = SKAction.sequence([SKAction.waitForDuration(2.5), finalScoreAction])
         tempScoreLabel!.runAction(finalAction)
         
         /*
