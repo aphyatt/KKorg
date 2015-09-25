@@ -31,16 +31,6 @@ class DropletLayer: SKNode {
     var fadeZoneRect: CGRect = CGRectNull
     
     //Variables affecting speed / frequency of droplet lines
-    var timeBetweenLines: NSTimeInterval = 0.5
-    var totalLinesDropped: Int = 0
-    var totalGroupsDropped: Int = 0
-    var currLinesToDrop: Int = 0
-    var lineCountBeforeDrops: Int = 0
-    var eggPercentage: Int = 100
-    var groupWaitTimeMin: CGFloat = 2.0
-    var groupWaitTimeMax: CGFloat = 3.0
-    var groupAmtMin: Int = 2
-    var groupAmtMax: Int = 3
     var checkDiffCalls: Int = 1
     
     required init?(coder aDecoder: NSCoder) {
@@ -84,7 +74,7 @@ class DropletLayer: SKNode {
                     changeDifficulty()
                 }
                 
-                if (totalLinesDropped - lineCountBeforeDrops) == currLinesToDrop {
+                if (GS.totalLinesDropped - GS.lineCountBeforeDrops) == GS.currLinesToDrop {
                     dropNewGroup()
                 }
                 break
@@ -96,11 +86,7 @@ class DropletLayer: SKNode {
         case .Classic:
             switch GS.GameState {
             case .GameRunning:
-                if (changeDiff) {
-                    changeDifficulty()
-                }
-                
-                if (totalLinesDropped - lineCountBeforeDrops) == currLinesToDrop {
+                if (GS.totalLinesDropped - GS.lineCountBeforeDrops) == GS.currLinesToDrop {
                     dropNewGroup()
                 }
                 break
@@ -119,56 +105,56 @@ class DropletLayer: SKNode {
     func setDifficulty(diff: Int) {
         switch diff {
         case V_EASY:
-            timeBetweenLines = 0.5
+            GS.timeBetweenLines = 0.5
             scene?.physicsWorld.gravity.dy = -7.8
-            groupWaitTimeMax = 3
-            groupWaitTimeMin = 2
-            eggPercentage = 100
+            GS.groupWaitTimeMax = 3
+            GS.groupWaitTimeMin = 2
+            GS.eggPercentage = 100
             break
         case EASY:
-            timeBetweenLines = 0.46
+            GS.timeBetweenLines = 0.46
             scene?.physicsWorld.gravity.dy = -9.0
-            groupWaitTimeMax = 2.8
-            groupWaitTimeMin = 1.8
-            eggPercentage = 70
+            GS.groupWaitTimeMax = 2.8
+            GS.groupWaitTimeMin = 1.8
+            GS.eggPercentage = 70
             break
         case MED:
-            timeBetweenLines = 0.42
+            GS.timeBetweenLines = 0.42
             scene?.physicsWorld.gravity.dy = -10.2
-            groupWaitTimeMax = 2.6
-            groupWaitTimeMin = 1.6
-            eggPercentage = 70
+            GS.groupWaitTimeMax = 2.6
+            GS.groupWaitTimeMin = 1.6
+            GS.eggPercentage = 70
             break
         case HARD:
-            timeBetweenLines = 0.38
+            GS.timeBetweenLines = 0.38
             scene?.physicsWorld.gravity.dy = -11.4
-            groupWaitTimeMax = 2.4
-            groupWaitTimeMin = 1.4
-            eggPercentage = 75
+            GS.groupWaitTimeMax = 2.4
+            GS.groupWaitTimeMin = 1.4
+            GS.eggPercentage = 75
             break
         case V_HARD:
-            timeBetweenLines = 0.34
+            GS.timeBetweenLines = 0.34
             scene?.physicsWorld.gravity.dy = -12.6
-            groupWaitTimeMax = 2.2
-            groupWaitTimeMin = 1.2
-            eggPercentage = 90
+            GS.groupWaitTimeMax = 2.2
+            GS.groupWaitTimeMin = 1.2
+            GS.eggPercentage = 90
             break
         default:
-            timeBetweenLines = 0.3
+            GS.timeBetweenLines = 0.3
             scene?.physicsWorld.gravity.dy = -13.8
-            groupWaitTimeMax = 2
-            groupWaitTimeMin = 1
-            eggPercentage = 90
+            GS.groupWaitTimeMax = 2
+            GS.groupWaitTimeMin = 1
+            GS.eggPercentage = 90
             break
         }
     }
     
     //Update Group Amount for Classic
     func updateGroupAmount() {
-        let t = totalGroupsDropped
+        let t = GS.totalGroupsDropped
         if t == 10 || t == 20 || t == 30 || t == 37 || t >= 42 {
-            groupAmtMin = (groupAmtMin*2 - 1)
-            groupAmtMax = (groupAmtMin*2 - 1)
+            GS.groupAmtMin = (GS.groupAmtMin*2 - 1)
+            GS.groupAmtMax = (GS.groupAmtMin*2 - 1)
         }
         
     }
@@ -176,31 +162,31 @@ class DropletLayer: SKNode {
     //Change Difficulty for Endless
     func changeDifficulty() {
         if GS.DiffLevel < EXTREME {
-            timeBetweenLines -= 0.04
+            GS.timeBetweenLines -= 0.04
             scene?.physicsWorld.gravity.dy -= 1.2
-            groupWaitTimeMax -= 0.2
-            groupWaitTimeMin -= 0.2
-            groupAmtMin = (groupAmtMin*2 - 1)
-            groupAmtMax = (groupAmtMin*2 - 1)
+            GS.groupWaitTimeMax -= 0.2
+            GS.groupWaitTimeMin -= 0.2
+            GS.groupAmtMin = (GS.groupAmtMin*2 - 1)
+            GS.groupAmtMax = (GS.groupAmtMin*2 - 1)
             GS.DiffLevel++
         }
         else {
-            groupAmtMin = (groupAmtMin*2 - 1)
-            groupAmtMax = (groupAmtMin*2 - 1)
+            GS.groupAmtMin = (GS.groupAmtMin*2 - 1)
+            GS.groupAmtMax = (GS.groupAmtMin*2 - 1)
         }
         
         switch GS.DiffLevel {
-        case V_EASY: eggPercentage = 100
+        case V_EASY: GS.eggPercentage = 100
             break
-        case EASY: eggPercentage = 70
+        case EASY: GS.eggPercentage = 70
             break
-        case MED: eggPercentage = 70
+        case MED: GS.eggPercentage = 70
             break
-        case HARD: eggPercentage = 75
+        case HARD: GS.eggPercentage = 75
             break
-        case V_HARD: eggPercentage = 90
+        case V_HARD: GS.eggPercentage = 90
             break
-        default: eggPercentage = 90
+        default: GS.eggPercentage = 90
             break
         }
         
@@ -231,7 +217,6 @@ class DropletLayer: SKNode {
             repeat = 1
         }
         
-        println("repeat = \(repeat)")
         if checkDiffCalls >= repeat {
             checkDiffCalls = 1
             changeDiff = true
@@ -260,23 +245,23 @@ class DropletLayer: SKNode {
         
         let linesToDrop: Int?
         let waitBeforeGroup: NSTimeInterval?
-        if totalLinesDropped == 0 {
+        if GS.totalLinesDropped == 0 {
             linesToDrop = 1
             waitBeforeGroup = 0.0
         }
         else {
-            linesToDrop = randomInt(groupAmtMin, groupAmtMax)
-            waitBeforeGroup = NSTimeInterval(CGFloat.random(min: groupWaitTimeMin, max: groupWaitTimeMax))
+            linesToDrop = randomInt(GS.groupAmtMin, GS.groupAmtMax)
+            waitBeforeGroup = NSTimeInterval(CGFloat.random(min: GS.groupWaitTimeMin, max: GS.groupWaitTimeMax))
         }
         
-        let groupSequence = SKAction.sequence([SKAction.runBlock({self.dropRandomLine()}), SKAction.waitForDuration(timeBetweenLines)])
+        let groupSequence = SKAction.sequence([SKAction.runBlock({self.dropRandomLine()}), SKAction.waitForDuration(GS.timeBetweenLines)])
         let groupAction = SKAction.repeatAction(groupSequence, count: linesToDrop!)
         let finalAction = SKAction.sequence([SKAction.waitForDuration(waitBeforeGroup!), groupAction])
         
         //save variables to check when you can drop another group
-        currLinesToDrop = linesToDrop!
-        lineCountBeforeDrops = totalLinesDropped
-        totalGroupsDropped++
+        GS.currLinesToDrop = linesToDrop!
+        GS.lineCountBeforeDrops = GS.totalLinesDropped
+        GS.totalGroupsDropped++
         
         //println("Droping group size: \(linesToDrop), waitBeforeGroup: \(waitBeforeGroup)")
         runAction(finalAction)
@@ -300,7 +285,7 @@ class DropletLayer: SKNode {
             runAction(dropLine)
             //runAction(dropLineSound) whistle down
         
-            totalLinesDropped++;
+            GS.totalLinesDropped++;
         }
     }
     
@@ -312,7 +297,7 @@ class DropletLayer: SKNode {
     func pickRandomLine() -> [Int] {
         let percentage: Int = randomInt(1, 100)
         let linesForDifficulty: [[Int]]
-        if percentage <= eggPercentage { linesForDifficulty = difficultyArraysG[GS.DiffLevel] }
+        if percentage <= GS.eggPercentage { linesForDifficulty = difficultyArraysG[GS.DiffLevel] }
         else { linesForDifficulty = difficultyArraysB[GS.DiffLevel] }
         
         var randomIndex: Int = Int(arc4random_uniform(UInt32(linesForDifficulty.endIndex)))
@@ -481,8 +466,9 @@ class DropletLayer: SKNode {
         joey.runAction(SKAction.removeFromParent())
         
         GS.CurrScore++
-        println("Score: \(GS.CurrScore)")
-        endlessScoreChange = true
+        if GS.GameMode == .Endless {
+            TheEndlessHUD!.updateScore()
+        }
         
     }
     
@@ -526,13 +512,11 @@ class DropletLayer: SKNode {
         let shakeOff = SKAction.sequence([shakeLeft, shakeRight, shakeLeft])
         //turn shake off into screen shake
         TheKangaroo!.runAction(shakeOff)
-        println("shake")
         
         boomer.removeAllActions()
         boomer.runAction(SKAction.removeFromParent())
         
         if GS.GameMode == .Endless {
-            println("life\(GS.CurrBoomerangLives)")
             TheEndlessHUD?.removeLife("life\(GS.CurrBoomerangLives)")
             GS.CurrBoomerangLives--
             
@@ -555,7 +539,6 @@ class DropletLayer: SKNode {
         enumerateChildNodesWithName("*") { node, _ in
             if node.name == "joey" || node.name == "missedJoey" ||
                 node.name == "boomerang" || node.name == "missedBoomer" {
-                    println("node found")
                     let node = node as! SKSpriteNode
                     node.removeAllActions()
                     node.physicsBody = nil

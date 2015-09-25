@@ -32,10 +32,6 @@ class ClassicHUD: SKNode {
         
     }
     
-    func update(currentTime: CFTimeInterval) {
-        
-    }
-    
     private func CreateJoeyCountLabel() {
         joeyCountLabel = GameLabel(text: "Joeys: \(GS.JoeysLeft)", size: 57,
             horAlignMode: .Center, vertAlignMode: .Center,

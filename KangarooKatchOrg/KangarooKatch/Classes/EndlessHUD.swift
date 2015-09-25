@@ -51,10 +51,12 @@ class EndlessHUD: SKNode {
     }
     
     func update(currentTime: CFTimeInterval) {
+        /*
         if endlessScoreChange {
             updateScore()
             endlessScoreChange = false
         }
+        */
     }
     
     private func CreateScoreLabel() {

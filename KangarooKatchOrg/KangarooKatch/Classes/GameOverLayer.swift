@@ -193,10 +193,6 @@ class GameOverLayer: SKNode {
         })
         let grow = SKAction.scaleBy(1.005, duration: 0.05)
         
-        let test = SKAction.runBlock({
-            println("hello")
-        })
-        
         let scoreAction = SKAction.group([changeScore, grow])
         let waitFirstScoreAction = SKAction.waitForDuration(0.5)
         let waitQuickScoreAction = SKAction.waitForDuration(0.01)

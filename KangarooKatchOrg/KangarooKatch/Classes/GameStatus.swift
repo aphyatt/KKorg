@@ -8,7 +8,6 @@
 
 import SpriteKit
 var GS = GameStatus()
-var endlessScoreChange: Bool = false
 
 class GameStatus {
     //endless
@@ -30,6 +29,7 @@ class GameStatus {
     
     //Droplet Status
     var timeBetweenLines: NSTimeInterval = 0.5
+    var totalGroupsDropped: Int = 0
     var totalLinesDropped: Int = 0
     var currLinesToDrop: Int = 0
     var lineCountBeforeDrops: Int = 0

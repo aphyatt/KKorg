@@ -125,6 +125,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break
         case .Paused:
             dropLines = false
+            HUDdisplay!.update(currentTime)
             break
         case .GameOver:
             dropLines = false
@@ -149,6 +150,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break
         case .Paused:
+            HUDdisplay!.sceneTouched(touchLocation)
             break
         case .GameOver:
             GameOver!.sceneTouched(touchLocation)
@@ -180,6 +182,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break
         case .Paused:
+            HUDdisplay!.sceneUntouched(touchLocation)
             break
         case .GameOver:
             GameOver!.sceneUntouched(touchLocation)
@@ -230,6 +233,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hudOutline.zPosition = 500
         addChild(hudOutline)
             */
+        let pauseRect = drawRectangle(CGRect(x: 585, y: GameSize!.height - 80, width: 60, height: 60), SKColor.blackColor(), 6.0)
+        pauseRect.zPosition = 3
+        addChild(pauseRect)
         
     }
     

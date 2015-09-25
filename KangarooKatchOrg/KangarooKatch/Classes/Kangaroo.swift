@@ -78,7 +78,6 @@ class Kangaroo: SKNode {
     }
     
     func sceneTouched(touchLocation:CGPoint) {
-        println("\(touchLocation)")
         switch GS.GameControls {
         case .TwoThumbs:
             if leftRect!.contains(touchLocation) {

@@ -31,8 +31,6 @@ class MainMenu: SKScene {
         background.zPosition = -1
         addChild(background)
         
-        println("height: \(size.height)")
-        
         classicButton.position = CGPoint(x: size.width/2, y: classicY)
         endlessButton.position = CGPoint(x: size.width/2, y: endlessY)
         multiplayerButton.position = CGPoint(x: size.width/2, y: multiY)
